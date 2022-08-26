@@ -6,7 +6,7 @@
     grid-template-rows: repeat(3,1fr);
 }
 button{
-    font-size: 3rem;
+    font-size: 4rem;
     display: grid;
     grid-template-columns: 1fr;
    
