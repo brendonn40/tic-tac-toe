@@ -1,0 +1,13 @@
+#display{
+    max-width: 500px;
+    height: 300px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+button{
+    font-size: 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+   
+}
