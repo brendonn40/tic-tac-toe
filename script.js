@@ -3,7 +3,10 @@ const gameboard = (function(){
     const makeMove = (player,position) =>{
         if(board[position] == ""){
             board[position] = player.marker
+            player.isTurn = false
+            return true
         }
+        return false
     }
 
     const getBoard = () =>{
@@ -13,13 +16,12 @@ const gameboard = (function(){
 })()
 
 const playerFactory = (marker) =>{
-    return {marker}
+    this.isTurn = null
+    return {marker,isTurn}
 }
 
 const displayController = (function(){
     const display = document.getElementById("display")
-    const buttons = document.querySelectorAll("button")
-    const playerx = playerFactory("x")
     let board = gameboard.getBoard()
     const createBoardDisplay = () => {
         for (let index = 0; index < board.length; index++) {
@@ -30,10 +32,17 @@ const displayController = (function(){
         }
     }
     const moveListener = () => {
+        const buttons = document.querySelectorAll("button")
+        const playerx = playerFactory("x")
         for (let i = 0; i < buttons.length; i++) {
-            buttons[i].addEventListener("click",() => {
-                gameboard.makeMove(playerx,buttons[i].getAttribute("data"))
-                displayController.createBoardDisplay(gameboard.getBoard())
+            buttons[i].addEventListener("click",function(e){
+                e.stopPropagation()
+                let position = parseInt(buttons[i].getAttribute("data"))
+                let valid =gameboard.makeMove(playerx,position)
+                if(valid){
+                    buttons[i].textContent=playerx.marker
+                }
+                
                 
             })
             
@@ -42,8 +51,8 @@ const displayController = (function(){
     return{createBoardDisplay,moveListener}
 })()
 brendon = playerFactory("o")
-gameboard.makeMove(brendon,8)
-gameboard.makeMove(brendon,5)
+// gameboard.makeMove(brendon,8)
+// gameboard.makeMove(brendon,5)
 // console.log(gameboard.getBoard())
 displayController.createBoardDisplay()
 displayController.moveListener()
