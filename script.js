@@ -1,7 +1,7 @@
 const gameboard = (function(){
-    let board =["x","o","x","x","o","x","x","o",""]
+    let board =["","","","","","","","",""]
     const makeMove = (player,position) =>{
-        if(board[position] === ""){
+        if(board[position] == ""){
             board[position] = player.marker
         }
     }
@@ -18,16 +18,32 @@ const playerFactory = (marker) =>{
 
 const displayController = (function(){
     const display = document.getElementById("display")
-    const createBoardDisplay = (board) => {
+    const buttons = document.querySelectorAll("button")
+    const playerx = playerFactory("x")
+    let board = gameboard.getBoard()
+    const createBoardDisplay = () => {
         for (let index = 0; index < board.length; index++) {
             let play = document.createElement("button")
             play.textContent= board[index]
+            play.setAttribute("data",index)
             display.appendChild(play)
         }
     }
-    return{createBoardDisplay}
+    const moveListener = () => {
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click",() => {
+                gameboard.makeMove(playerx,buttons[i].getAttribute("data"))
+                displayController.createBoardDisplay(gameboard.getBoard())
+                
+            })
+            
+        }
+    }
+    return{createBoardDisplay,moveListener}
 })()
-// brendon = playerFactory("o")
-// gameboard.makeMove(brendon,8)
-console.log(gameboard.getBoard())
-displayController.createBoardDisplay(gameboard.getBoard())
+brendon = playerFactory("o")
+gameboard.makeMove(brendon,8)
+gameboard.makeMove(brendon,5)
+// console.log(gameboard.getBoard())
+displayController.createBoardDisplay()
+displayController.moveListener()
