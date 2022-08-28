@@ -49,11 +49,11 @@ const gameboard = (function(){
     }
     const checkMarker = (player1,player2,winnerMarker) => {
         if(player1.marker == winnerMarker){
-            return `Player with the ${player1.marker} marker wins`
+            return `${player1.name} wins`
             
         }
         if(player2.marker == winnerMarker){
-            return `Player with the ${player2.marker} marker wins`
+            return `${player2.name} wins`
         }
     }
     const getBoard = () =>{
@@ -68,7 +68,8 @@ const gameboard = (function(){
 
 const playerFactory = (marker) =>{
     this.isTurn = false
-    return {marker,isTurn}
+    this.name =`Player ${marker}`
+    return {marker,isTurn,name}
 }
 
 const displayController = (function(){
