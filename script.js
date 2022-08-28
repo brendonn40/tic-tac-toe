@@ -42,7 +42,7 @@ const gameboard = (function(){
             return
         }
     if(!board.includes("")){
-        alert("Its a draw.")
+        alert("Its a tie.")
         return
     }
         
@@ -59,7 +59,11 @@ const gameboard = (function(){
     const getBoard = () =>{
         return board
     }
-    return{getBoard,makeMove,checkForEnd}
+    const restart = () => {
+        board =["","","","","","","","",""]
+        displayController.clear()
+    }
+    return{getBoard,makeMove,checkForEnd,restart}
 })() 
 
 const playerFactory = (marker) =>{
@@ -86,6 +90,10 @@ const displayController = (function(){
         for (let i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click",function(e){
                 e.stopPropagation()
+                if(buttons[i].getAttribute("data") === "reset"){
+                    gameboard.restart()
+                    return
+                }
                 let position = parseInt(buttons[i].getAttribute("data"))
                 if(playerx.isTurn){
                     let valid =gameboard.makeMove(playerx,playero,position)
@@ -106,7 +114,17 @@ const displayController = (function(){
             
         }
     }
-    return{createBoardDisplay,moveListener}
+    const clear = () =>{
+        const buttons = document.querySelectorAll("button")
+        for (let i = 0; i < buttons.length; i++) {
+            if(buttons[i].getAttribute("data")!== "reset"){
+                buttons[i].textContent=""
+            }
+            
+            
+        }
+    }
+    return{createBoardDisplay,moveListener,clear}
 })()
 
 displayController.createBoardDisplay()
