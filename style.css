@@ -11,3 +11,6 @@ button{
     grid-template-columns: 1fr;
    
 }
+.flex{
+    display: flex;
+}

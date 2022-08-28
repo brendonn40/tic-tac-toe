@@ -95,6 +95,10 @@ const displayController = (function(){
                     gameboard.restart()
                     return
                 }
+                if(buttons[i].getAttribute("data") === "name"){
+                    changeNames()
+                    return
+                }
                 let position = parseInt(buttons[i].getAttribute("data"))
                 if(playerx.isTurn){
                     let valid =gameboard.makeMove(playerx,playero,position)
@@ -118,14 +122,18 @@ const displayController = (function(){
     const clear = () =>{
         const buttons = document.querySelectorAll("button")
         for (let i = 0; i < buttons.length; i++) {
-            if(buttons[i].getAttribute("data")!== "reset"){
+            if(buttons[i].getAttribute("data")!== "reset" && buttons[i].getAttribute("data")!== "name"){
                 buttons[i].textContent=""
             }
             
             
         }
     }
-    return{createBoardDisplay,moveListener,clear}
+    const changeNames = () => {
+        playerx.name = prompt("Player name (X marker):")
+        playero.name = prompt("Player name (O marker):")
+    }
+    return{createBoardDisplay,moveListener,clear,changeNames}
 })()
 
 displayController.createBoardDisplay()
