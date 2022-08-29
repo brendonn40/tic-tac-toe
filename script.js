@@ -63,13 +63,38 @@ const gameboard = (function(){
         board =["","","","","","","","",""]
         displayController.clear()
     }
-    return{getBoard,makeMove,checkForEnd,restart}
+    const computer = (pc,player) => {
+        ocupados =[]
+        possiveis = [0,1,2,3,4,5,6,7,8]
+        for (let i = 0; i < board.length; i++) {
+            if(board[i] !== ""){
+                ocupados.push(i)
+            }   
+        }
+        for (let i = 0; i < possiveis.length; i++) {
+            for (let j = 0; j < ocupados.length; j++) {
+                if(possiveis[i] === ocupados[j]){
+                    possiveis.splice(i,1)
+                }
+                
+            }   
+        }
+        let position=getRndInteger(0,possiveis.length) + 3
+        gameboard.makeMove(pc,player,position)
+        return position
+
+    }
+    function getRndInteger(min, max) {
+        return Math.floor(Math.random() * (max - min) ) + min;
+      }
+    return{getBoard,makeMove,checkForEnd,restart,computer}
 })() 
 
 const playerFactory = (marker) =>{
     this.isTurn = false
     this.name =`Player ${marker}`
-    return {marker,isTurn,name}
+    this.pc = false
+    return {marker,isTurn,name,pc}
 }
 
 const displayController = (function(){
@@ -99,6 +124,10 @@ const displayController = (function(){
                     changeNames()
                     return
                 }
+                if(buttons[i].getAttribute("data") === "pc"){
+                    playero.pc = !playero.pc
+                    return
+                }
                 let position = parseInt(buttons[i].getAttribute("data"))
                 if(playerx.isTurn){
                     let valid =gameboard.makeMove(playerx,playero,position)
@@ -106,15 +135,22 @@ const displayController = (function(){
                         buttons[i].textContent=playerx.marker
                         gameboard.checkForEnd(playerx,playero)
                     }
-                }
-                if(playero.isTurn){
-                    let valid =gameboard.makeMove(playero,playerx,position)
-                    if(valid){
-                        buttons[i].textContent=playero.marker
+                    if(playero.pc){
+                        pcMove = gameboard.computer(playero,playerx)
+                        buttons[pcMove].textContent = playero.marker
                         gameboard.checkForEnd(playerx,playero)
                     }
                 }
-            
+                // if its not the pc playing do this
+                if(!playero.pc){   
+                    if(playero.isTurn){
+                        let valid =gameboard.makeMove(playero,playerx,position)
+                        if(valid){
+                            buttons[i].textContent=playero.marker
+                            gameboard.checkForEnd(playerx,playero)
+                        }
+                    }
+                }
             })
             
         }
@@ -122,7 +158,7 @@ const displayController = (function(){
     const clear = () =>{
         const buttons = document.querySelectorAll("button")
         for (let i = 0; i < buttons.length; i++) {
-            if(buttons[i].getAttribute("data")!== "reset" && buttons[i].getAttribute("data")!== "name"){
+            if(buttons[i].getAttribute("data")!== "reset" && buttons[i].getAttribute("data")!== "name" && buttons[i].getAttribute("data")!== "pc "){
                 buttons[i].textContent=""
             }
             
