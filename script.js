@@ -48,10 +48,14 @@ const gameboard = (function(){
     }
     const checkMarker = (player1,player2,winnerMarker) => {
         if(player1.marker == winnerMarker){
+            player1.isTurn = false
+            player2.isTurn = false
             return `${player1.name} wins`
             
         }
         if(player2.marker == winnerMarker){
+            player1.isTurn = false
+            player2.isTurn = false
             return `${player2.name} wins`
         }
     }
@@ -175,6 +179,10 @@ const displayController = (function(){
     const changeNames = () => {
         playerx.name = prompt("Player name (X marker):")
         playero.name = prompt("Player name (O marker):")
+    }
+    const congratulateWinner = () => {
+        body= document.querySelector("body")
+
     }
     return{createBoardDisplay,moveListener,clear,changeNames}
 })()
