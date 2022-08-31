@@ -4,17 +4,16 @@ const gameboard = (function(){
         if(board[position] == ""){
             if(player1.isTurn){
                 board[position] = player1.marker
-                player1.isTurn = false
-                player2.isTurn = true
+                player1.isTurn = !player1.isTurn
+                player2.isTurn = !player2.isTurn
                 return true
             }
             if(player2.isTurn){
                 board[position] = player2.marker
-                player2.isTurn = false
-                player1.isTurn = true
+                player2.isTurn = !player2.isTurn
+                player1.isTurn = !player1.isTurn
                 return true
             }
-            return true
         }
         return false
     }
@@ -23,29 +22,29 @@ const gameboard = (function(){
             let aux = i * 3
            if(board[aux] !== "" && board[aux] === board[aux+1] && board[aux+1] === board[aux+2]){
                 alert(checkMarker(player1,player2,board[aux]))
-                return
+                return true
             //we have a winner in the rows
            }
            if(board[i] !== "" && board[i] === board[i+3] && board[i+3] === board[i+6]){
             alert(checkMarker(player1,player2,board[i]))
-            return  
+            return true
             //we have a winner in the columns
            }
         }
         if(board[0] !== "" && board[0] === board[4]&& board[4] === board[8]){
             alert(checkMarker(player1,player2,board[0]))
-            return
+            return true
             // we have a winner on the diagonal
         }
         else if(board[2] !== "" && board[2] === board[4] && board[4] === board[6]){
             alert(checkMarker(player1,player2,board[2]))
-            return
+            return true
         }
     if(!board.includes("")){
         alert("Its a tie.")
-        return
+        return true
     }
-        
+     return false   
     }
     const checkMarker = (player1,player2,winnerMarker) => {
         if(player1.marker == winnerMarker){
@@ -63,7 +62,7 @@ const gameboard = (function(){
         board =["","","","","","","","",""]
         displayController.clear()
     }
-    const computer = (pc,player) => {
+    const computerMove = (pc,player) => {
         ocupados =[]
         possiveis = [0,1,2,3,4,5,6,7,8]
         for (let i = 0; i < board.length; i++) {
@@ -79,15 +78,19 @@ const gameboard = (function(){
                 
             }   
         }
-        let position=getRndInteger(0,possiveis.length) + 3
-        gameboard.makeMove(pc,player,position)
-        return position
+        let pcChoice = randomItem(possiveis)
+        
+        gameboard.makeMove(pc,player,pcChoice)
+        data = `[data="${pcChoice}"]`
+        const buttonElement = document.querySelector(data)
+        buttonElement.textContent = pc.marker
+        checkForEnd(pc,player)
 
     }
-    function getRndInteger(min, max) {
-        return Math.floor(Math.random() * (max - min) ) + min;
-      }
-    return{getBoard,makeMove,checkForEnd,restart,computer}
+    function randomItem(items){
+    return items[Math.floor(Math.random()*items.length)];    
+}
+    return{getBoard,makeMove,checkForEnd,restart,computerMove}
 })() 
 
 const playerFactory = (marker) =>{
@@ -118,6 +121,8 @@ const displayController = (function(){
                 e.stopPropagation()
                 if(buttons[i].getAttribute("data") === "reset"){
                     gameboard.restart()
+                    playerx.isTurn = true
+                    playero.isTurn = false
                     return
                 }
                 if(buttons[i].getAttribute("data") === "name"){
@@ -133,24 +138,26 @@ const displayController = (function(){
                     let valid =gameboard.makeMove(playerx,playero,position)
                     if(valid){
                         buttons[i].textContent=playerx.marker
-                        gameboard.checkForEnd(playerx,playero)
-                    }
-                    if(playero.pc){
-                        pcMove = gameboard.computer(playero,playerx)
-                        buttons[pcMove].textContent = playero.marker
-                        gameboard.checkForEnd(playerx,playero)
+                        let end = gameboard.checkForEnd(playerx,playero)
+                        if(!end){
+                            if(playero.pc){
+                                gameboard.computerMove(playero,playerx)
+                            }
+                        }
                     }
                 }
-                // if its not the pc playing do this
-                if(!playero.pc){   
+                if(playero.pc === false){
                     if(playero.isTurn){
                         let valid =gameboard.makeMove(playero,playerx,position)
                         if(valid){
                             buttons[i].textContent=playero.marker
                             gameboard.checkForEnd(playerx,playero)
                         }
-                    }
+                        }
                 }
+                
+                
+
             })
             
         }
@@ -158,7 +165,7 @@ const displayController = (function(){
     const clear = () =>{
         const buttons = document.querySelectorAll("button")
         for (let i = 0; i < buttons.length; i++) {
-            if(buttons[i].getAttribute("data")!== "reset" && buttons[i].getAttribute("data")!== "name" && buttons[i].getAttribute("data")!== "pc "){
+            if(buttons[i].getAttribute("data")!== "reset" && buttons[i].getAttribute("data")!== "name" && buttons[i].getAttribute("data")!== "pc"){
                 buttons[i].textContent=""
             }
             
