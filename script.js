@@ -180,10 +180,7 @@ const displayController = (function(){
         playerx.name = prompt("Player name (X marker):")
         playero.name = prompt("Player name (O marker):")
     }
-    const congratulateWinner = () => {
-        body= document.querySelector("body")
 
-    }
     return{createBoardDisplay,moveListener,clear,changeNames}
 })()
 
